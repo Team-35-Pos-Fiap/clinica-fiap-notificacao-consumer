@@ -32,18 +32,6 @@ public class EmailService {
 	}
 	
 	public String enviarEmailTexto(String destinatario, String assunto, String mensagem) {
-		
-//		try {
-//			SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-//			simpleMailMessage.setFrom(remetente);
-//			simpleMailMessage.setTo(destinatario);
-//			simpleMailMessage.setSubject(assunto);
-//			simpleMailMessage.setText(mensagem);
-//			javaMailSender.send(simpleMailMessage);
-//			return "Email enviado";
-//		}catch(Exception e) {
-//			return "Erro ao tentar enviar email " + e.getLocalizedMessage();
-//		}
 
 		Properties props = new Properties();
 		props.put("mail.smtp.auth", "true");
