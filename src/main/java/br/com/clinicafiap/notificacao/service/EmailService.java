@@ -1,6 +1,7 @@
 package br.com.clinicafiap.notificacao.service;
 
 import br.com.clinicafiap.notificacao.record.EmailRecord;
+import br.com.clinicafiap.notificacao.service.interfaces.IEmailService;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -14,13 +15,16 @@ import org.springframework.stereotype.Service;
 import java.util.Properties;
 
 @Service
-public class EmailService {
+public class EmailService implements IEmailService {
 
 	@Autowired
 	private JavaMailSender javaMailSender;
-	
-	@Value("${spring.mail.username}")
+
+	@Value("${app.email.remetente}")
 	private String remetente;
+
+	@Value("${app.email.senha}")
+	private String senha;
 
 	@KafkaListener(topicPartitions = @TopicPartition(
 			topic = "notificacao-email",
@@ -30,24 +34,28 @@ public class EmailService {
 		var retorno = enviarEmailTexto(email.destinatario(), email.assunto(), email.mensagem());
 		System.out.println(retorno);
 	}
-	
-	public String enviarEmailTexto(String destinatario, String assunto, String mensagem) {
 
+	public Session configuraemail(){
 		Properties props = new Properties();
 		props.put("mail.smtp.auth", "true");
 		props.put("mail.smtp.starttls.enable", "true");
 		props.put("mail.smtp.host", "smtp.gmail.com");
 		props.put("mail.smtp.port", "587");
 
-		Session session = Session.getInstance(props, new Authenticator() {
-			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication("posfiapteam35@gmail.com", "jbvp ugel gull ksqr");
-			}
-		});
+        return Session.getInstance(props, new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(remetente, senha);
+            }
+        });
+	}
+	
+	public String enviarEmailTexto(String destinatario, String assunto, String mensagem) {
+
+		Session session = configuraemail();
 
 		try {
 			Message message = new MimeMessage(session);
-			message.setFrom(new InternetAddress("posfiapteam35@gmail.com"));
+			message.setFrom(new InternetAddress(remetente));
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destinatario));
 			message.setSubject(assunto);
 			message.setText(mensagem);
