@@ -17,9 +17,6 @@ import java.util.Properties;
 @Service
 public class EmailService implements IEmailService {
 
-	@Autowired
-	private JavaMailSender javaMailSender;
-
 	@Value("${app.email.remetente}")
 	private String remetente;
 
