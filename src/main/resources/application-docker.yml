@@ -3,6 +3,13 @@ spring:
     name: notificacaoConsumer
   kafka:
     bootstrap-servers: kafka:9092
+    consumer:
+      group-id: notificacao-email
+      auto-offset-reset: earliest
+    listener:
+      missing-topics-fatal: false
+    admin:
+      auto-create: true
 
 server:
   port: 8082
